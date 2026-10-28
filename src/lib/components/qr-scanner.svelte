@@ -168,7 +168,6 @@
     </header>
 
     <div class="relative min-h-0 flex-1 overflow-hidden">
-      <!-- video 在 overlay 挂载时即存在，保证 begin() 拿到权限后总能取到它 -->
       <video bind:this={videoEl} playsinline muted autoplay class="h-full w-full object-cover"
       ></video>
 

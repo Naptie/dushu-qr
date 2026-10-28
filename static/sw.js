@@ -1,4 +1,4 @@
-const CACHE = `dushu-qr-v1`;
+const CACHE = `dushu-qr-v2`;
 const SHELL = ['./', './favicon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {

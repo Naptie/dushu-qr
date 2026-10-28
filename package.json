@@ -11,6 +11,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "icons": "tsx ./scripts/generate-icons.ts",
+    "hdr": "tsx ./scripts/generate-hdr-white.ts",
     "format": "prettier --write .",
     "lint": "eslint .",
     "fl": "prettier --write . && eslint . --fix"
@@ -27,6 +28,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.20.0",
     "globals": "^17.7.0",
+    "open-ultrahdr": "^0.2.0",
     "prettier": "^3.9.5",
     "prettier-plugin-svelte": "^3.5.2",
     "prettier-plugin-tailwindcss": "^0.7.4",
@@ -47,6 +49,7 @@
     "@lucide/svelte": "^1.61.0",
     "bits-ui": "^2.20.2",
     "cn": "^0.5.0",
+    "jsqr": "^1.4.0",
     "qrcode-generator": "^1.4.4",
     "tailwind-variants": "^3.3.1"
   },

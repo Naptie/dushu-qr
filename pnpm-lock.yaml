@@ -175,6 +175,9 @@ importers:
       cn:
         specifier: ^0.5.0
         version: 0.5.0
+      jsqr:
+        specifier: ^1.4.0
+        version: 1.4.0
       qrcode-generator:
         specifier: ^1.4.4
         version: 1.5.2
@@ -215,6 +218,9 @@ importers:
       globals:
         specifier: ^17.7.0
         version: 17.13.0
+      open-ultrahdr:
+        specifier: ^0.2.0
+        version: 0.2.0
       prettier:
         specifier: ^3.9.5
         version: 3.9.10
@@ -1296,6 +1302,9 @@ packages:
   json-stable-stringify-without-jsonify@1.0.1:
     resolution: {integrity: sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==}
 
+  jsqr@1.4.0:
+    resolution: {integrity: sha512-dxLob7q65Xg2DvstYkRpkYtmKm2sPJ9oFhrhmudT1dZvNFFTlroai3AWSpLey/w5vMcLBXRgOJsbXpdN9HzU/A==}
+
   keyv@5.6.0:
     resolution: {integrity: sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw==}
 
@@ -1501,6 +1510,14 @@ packages:
   obug@2.2.1:
     resolution: {integrity: sha512-XrsrhT5sybtKI6wakr2SPOlGZWWYbUXZ7a0jT8/QOeAPau+1X/bSegNe5YR75oJmEZQbKningirmGOEJCIk61Q==}
     engines: {node: '>=12.20.0'}
+
+  open-ultrahdr-wasm@0.2.0:
+    resolution: {integrity: sha512-36PYnCLJRUBcJ77vJStqx2N5CxiHUyVLY+mFY08JuY1xImoIT4gvI2U/tlM68ZzeZy0nwxP75KanBBepDj2Usw==}
+    engines: {node: '>=18.0.0'}
+
+  open-ultrahdr@0.2.0:
+    resolution: {integrity: sha512-AYDJEt1rdAV8Yu3arlMfaIf0psjNyIWPytDyc93ltJcEKQ53M43CNQxvpMZh81l49omY5BChbhN9gKcElEce/A==}
+    engines: {node: '>=20.0.0'}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -2749,6 +2766,8 @@ snapshots:
 
   json-stable-stringify-without-jsonify@1.0.1: {}
 
+  jsqr@1.4.0: {}
+
   keyv@5.6.0:
     dependencies:
       '@keyv/serialize': 1.1.1
@@ -2891,6 +2910,12 @@ snapshots:
   natural-compare@1.4.0: {}
 
   obug@2.2.1: {}
+
+  open-ultrahdr-wasm@0.2.0: {}
+
+  open-ultrahdr@0.2.0:
+    dependencies:
+      open-ultrahdr-wasm: 0.2.0
 
   optionator@0.9.4:
     dependencies:

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { browser } from '$app/env';
-  import qrcode from 'qrcode-generator';
+  import { resolve } from '$app/paths';
   import ShareIcon from '@lucide/svelte/icons/share-2';
   import ShieldCheckIcon from '@lucide/svelte/icons/shield-check';
   import SmartphoneIcon from '@lucide/svelte/icons/smartphone';
-  import { buildPairingLink } from '../pairing.js';
+  import { buildPairingLink, renderQrSvg } from '../pairing.js';
   import { Button } from './ui/button';
   import * as Dialog from './ui/dialog';
   import { Input } from './ui/input';
@@ -21,39 +21,28 @@
 
   let copied = $state(false);
   let copyFailed = $state(false);
+  let idCopied = $state(false);
+  let idCopyFailed = $state(false);
 
-  // Built from the live page URL so the link always points at the origin the
-  // user is actually on — including the `/dushu-qr` base path GitHub Pages
-  // serves the site under.
-  const link = $derived(browser ? buildPairingLink(location.href, openId) : '');
-  const qrSvg = $derived(link ? renderQr(link) : '');
+  // 配对链接固定指向首页（而非当前页面）：链接由浏览器打开时，
+  // 首页的 fragment 接入逻辑会立即绑定并显示通行码；App 扫码则只解析
+  // fragment，不关心目标路径。这样同一个码在两种消费方式下都成立。
+  const link = $derived(
+    browser ? buildPairingLink(new URL(resolve('/'), location.origin).toString(), openId) : ''
+  );
+  const qrSvg = $derived(
+    link ? renderQrSvg(link, '扫码在其他设备上绑定同一个 Open ID', '配对二维码') : ''
+  );
   const canShare = $derived(browser && typeof navigator !== 'undefined' && !!navigator.share);
 
-  function renderQr(text: string): string {
-    // Error correction 'M' instead of the mini program's 'L': this QR is read
-    // by a phone camera off a screen, so it can afford the extra redundancy.
-    // `margin: 24` is a 4-module quiet zone (cellSize 6) — scanners need it.
-    const q = qrcode(0, 'M');
-    q.addData(text);
-    q.make();
-    // `alt`/`title` are honoured by the library but missing from its bundled
-    // typings, so the options object is kept out of the call expression.
-    const options = {
-      cellSize: 6,
-      margin: 24,
-      scalable: true,
-      title: '扫码在手机上绑定同一个 Open ID',
-      alt: '配对二维码'
-    };
-    return q.createSvgTag(options);
-  }
-
   $effect(() => {
-    // Reset the copy state whenever the dialog is closed, so the next handover
+    // Reset the copy states whenever the dialog is closed, so the next handover
     // starts from a clean slate.
     if (!open) {
       copied = false;
       copyFailed = false;
+      idCopied = false;
+      idCopyFailed = false;
     }
   });
 
@@ -62,7 +51,7 @@
       await navigator.share({ title: '慧湖通通行码', url: link });
     } catch {
       // User dismissed the share sheet, or the platform refused it — the
-      // QR code and the copy button remain available.
+      // QR code and the copy buttons remain available.
     }
   }
 
@@ -76,10 +65,10 @@
     <Dialog.Header>
       <Dialog.Title class="flex items-center gap-2">
         <SmartphoneIcon class="size-5" />
-        发送到手机
+        出示配对码
       </Dialog.Title>
       <Dialog.Description>
-        使用手机扫描下方二维码，并在系统浏览器中打开。随后根据提示完成后续配置步骤。
+        在手机 App 的「扫码绑定」中扫描下方二维码；其他设备的浏览器也可以打开链接完成绑定。
       </Dialog.Description>
     </Dialog.Header>
 
@@ -94,12 +83,12 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <Input
             readonly
             value={link}
             aria-label="配对链接"
-            class="font-mono text-xs"
+            class="min-w-0 flex-1 font-mono text-xs"
             onclick={selectAll}
             onfocus={selectAll}
           />
@@ -112,6 +101,15 @@
             size="icon"
             resetAfter={null}
           />
+          <CopyButton
+            bind:copied={idCopied}
+            bind:failed={idCopyFailed}
+            text={openId}
+            label="复制 Open ID"
+            variant="outline"
+            size="icon"
+            resetAfter={null}
+          />
           {#if canShare}
             <Button variant="outline" size="icon" onclick={shareLink} aria-label="分享配对链接">
               <ShareIcon />
@@ -120,16 +118,22 @@
         </div>
 
         {#if copied}
-          <p class="text-status-ok text-xs">已复制，请发送至手机后使用系统浏览器打开。</p>
-        {:else if copyFailed}
-          <p class="text-status-err text-xs">复制失败，请长按上方链接手动复制。</p>
+          <p class="text-status-ok text-xs">已复制链接，请发送至其他设备后用浏览器打开。</p>
+        {/if}
+        {#if idCopied}
+          <p class="text-status-ok text-xs">
+            已复制 Open ID，可在 App 的「手动粘贴导入」中粘贴使用。
+          </p>
+        {/if}
+        {#if copyFailed || idCopyFailed}
+          <p class="text-status-err text-xs">复制失败，请长按上方链接或二维码链接手动复制。</p>
         {/if}
 
         <p class="text-muted-foreground flex items-start gap-2 text-xs leading-5">
           <ShieldCheckIcon class="mt-0.5 size-4 shrink-0" />
           <span>
             二维码内含你的账号凭证（Open
-            ID）。它只会保存到本地，不会发送到任何服务器；请勿截图或转发给他人。
+            ID）。它只会保存在本地，不会发送到任何服务器；请勿截图或转发给他人。
           </span>
         </p>
       </div>
